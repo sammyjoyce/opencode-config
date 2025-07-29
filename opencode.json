@@ -1,0 +1,103 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "system",
+  "autoupdate": true,
+  "layout": "auto",
+  "share": "disabled",
+  "model": "anthropic/claude-opus-4-20250514",
+  "keybinds": {
+    "leader": "ctrl+x"
+  },
+  "instructions": [
+    "rules/*.md"
+  ],
+  "mode": {
+    "build": {
+      "model": "anthropic/claude-opus-4-20250514",
+      "temperature": 0.3,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true
+      }
+    },
+    "plan": {
+      "model": "anthropic/claude-haiku-4-20250514",
+      "temperature": 0.1,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "patch": false
+      }
+    },
+    "spec": {
+      "model": "anthropic/claude-opus-4-20250514",
+      "temperature": 0.2,
+      "prompt": "{file:./prompts/spec-workflow-guide.md}",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "task": true
+      }
+    },
+    "hook": {
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "temperature": 0.2,
+      "prompt": "{file:./prompts/hook-creation.md}",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true,
+        "grep": true,
+        "glob": true,
+        "list": true,
+        "patch": true,
+        "todowrite": true,
+        "todoread": true,
+        "webfetch": true,
+        "task": false
+      }
+    }
+  },
+  "agent": {
+    "requirements-architect": {
+      "description": "Creates comprehensive technical documentation including requirements, specifications, and implementation plans",
+      "model": "anthropic/claude-opus-4-20250514",
+      "prompt": "You are a requirements architect who creates comprehensive technical documentation. Transform high-level ideas into structured, actionable documentation that guides development teams.",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "read": true,
+        "bash": false
+      }
+    }
+  },
+  "small_model": "anthropic/claude-3-5-haiku-20241022",
+  "mcp": {
+    "deep-wiki": {
+      "type": "remote",
+      "url": "https://mcp.deepwiki.com/sse"
+    },
+    "kit-mcp": {
+      "type": "local",
+      "command": [
+        "/opt/homebrew/bin/python3.11",
+        "-m",
+        "kit.mcp"
+      ],
+      "environment": {
+        "KIT_MCP_LOG_LEVEL": "INFO"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
