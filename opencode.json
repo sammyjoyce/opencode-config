@@ -2,7 +2,6 @@
   "$schema": "https://opencode.ai/config.json",
   "theme": "system",
   "autoupdate": true,
-  "layout": "auto",
   "share": "disabled",
   "model": "anthropic/claude-opus-4-20250514",
   "keybinds": {
@@ -84,14 +83,16 @@
         "edit": true,
         "read": true,
         "bash": false
-      }
+      },
+      "temperature": 0.2
     }
   },
   "small_model": "anthropic/claude-3-5-haiku-20241022",
   "mcp": {
     "deep-wiki": {
       "type": "remote",
-      "url": "https://mcp.deepwiki.com/sse"
+      "url": "https://mcp.deepwiki.com/sse",
+      "enabled": true
     },
     "kit-mcp": {
       "type": "local",
@@ -102,14 +103,16 @@
       ],
       "environment": {
         "KIT_MCP_LOG_LEVEL": "INFO"
-      }
+      },
+      "enabled": true
     },
     "playwright": {
       "type": "local",
       "command": [
         "npx",
         "@playwright/mcp@latest"
-      ]
+      ],
+      "enabled": true
     }
   }
 }
