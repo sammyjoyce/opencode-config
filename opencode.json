@@ -3,91 +3,43 @@
   "theme": "system",
   "autoupdate": true,
   "share": "disabled",
-  "model": "anthropic/claude-opus-4-20250514",
+  "model": "anthropic/claude-sonnet-4-20250514",
   "keybinds": {
     "leader": "ctrl+x"
   },
-  "instructions": [
-    "AGENTS.md",
-    "rules/*.md"
-  ],
-  "mode": {
-    "build": {
-      "model": "anthropic/claude-opus-4-20250514",
-      "temperature": 0.3
-    },
-    "plan": {
-      "model": "anthropic/claude-haiku-4-20250514",
-      "temperature": 0.1,
-      "tools": {
-        "write": false,
-        "edit": false,
-        "bash": false,
-        "patch": false
-      }
-    },
-    "spec": {
-      "model": "anthropic/claude-opus-4-20250514",
-      "temperature": 0.2,
-      "prompt": "{file:./prompts/spec-workflow-guide.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": false,
-        "task": true,
-        "read": true,
-        "glob": true,
-        "list": true
-      }
-    },
-    "hook": {
-      "model": "anthropic/claude-sonnet-4-20250514",
-      "temperature": 0.2,
-      "prompt": "{file:./prompts/hook-creation.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true,
-        "read": true,
-        "grep": true,
-        "glob": true,
-        "list": true,
-        "patch": true,
-        "todowrite": true,
-        "todoread": true,
-        "webfetch": true,
-        "task": false
-      }
-    },
-    "readonly": {
-      "model": "anthropic/claude-haiku-4-20250514",
-      "temperature": 0.1,
-      "tools": {
-        "read": true,
-        "grep": true,
-        "glob": true,
-        "bash": false,
-        "write": false,
-        "edit": false,
-        "patch": false
-      }
-    }
-  },
+  "permission": {},
+  "instructions": ["AGENTS.md", "rules/*.md"],
   "agent": {
-    "requirements-architect": {
-      "description": "Creates comprehensive technical documentation including requirements, specifications, and implementation plans",
-      "model": "anthropic/claude-opus-4-20250514",
-      "prompt": "You are a requirements architect who creates comprehensive technical documentation. Transform high-level ideas into structured, actionable documentation that guides development teams.",
+    "build": {
+      "temperature": 1.0,
+      "prompt": "{file:./prompts/build.txt}"
+    },
+    "codebase-search": {
+      "description": "Finds files relevant to queries using efficient search tools",
+      "mode": "subagent",
+  "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "{file:./prompts/codebase-search.txt}",
+      "temperature": 1.0,
       "tools": {
-        "write": true,
-        "edit": true,
+        "grep": true,
         "read": true,
-        "bash": false
-      },
-      "temperature": 0.2
+        "list": true,
+        "glob": true,
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "patch": false,
+        "webfetch": false
+      }
+    },
+    "oracle": {
+      "description": "Expert AI advisor for advanced reasoning, technical guidance, code reviews and architectural advice",
+      "mode": "subagent",
+      "model": "anthropic/claude-opus-4-1-20250805",
+      "prompt": "{file:./prompts/oracle.txt}",
+      "temperature": 1.0
     }
   },
-  "small_model": "anthropic/claude-3-5-haiku-20241022",
   "mcp": {
     "deep-wiki": {
       "type": "remote",
@@ -96,11 +48,7 @@
     },
     "kit-mcp": {
       "type": "local",
-      "command": [
-        "/opt/homebrew/bin/python3.11",
-        "-m",
-        "kit.mcp"
-      ],
+      "command": ["/opt/homebrew/bin/python3.11", "-m", "kit.mcp"],
       "environment": {
         "KIT_MCP_LOG_LEVEL": "INFO"
       },
@@ -108,11 +56,74 @@
     },
     "playwright": {
       "type": "local",
-      "command": [
-        "npx",
-        "@playwright/mcp@latest"
-      ],
+      "command": ["bunx", "@playwright/mcp@latest"],
       "enabled": true
+    }
+  },
+  "formatter": {
+    "zig": {
+      "command": ["zlint", "$FILE"],
+      "extensions": [".zig", ".zon"]
+    }
+  },
+  "provider": {
+    "anthropic": {
+      "models": {
+        "claude-sonnet-4-20250514": {
+
+          "options": {
+            "temperature": 0.7,
+            "thinking": {
+              "type": "enabled",
+              "budgetTokens": 20000
+            }
+          }
+        },
+        "claude-opus-4-20250514": {
+          "options": {
+            "temperature": 0.7,
+            "thinking": {
+              "type": "enabled",
+              "budgetTokens": 20000
+            }
+          }
+        }
+      }
+    },
+    "openai": {
+      "models": {
+        "o3": {
+          "options": {
+            "temperature": 0.7,
+            "reasoningEffort": "medium"
+          }
+        },
+        "gpt-5": {
+          "options": {
+            "temperature": 0.7,
+            "reasoningEffort": "medium",
+            "textVerbosity": "medium",
+            "reasoningSummary": "auto",
+            "include": ["reasoning.encrypted_content"]
+          }
+        }
+      }
+    },
+    "vertex-qwen": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Vertex AI Qwen",
+      "options": {
+        "baseURL": "https://us-south1-aiplatform.googleapis.com/v1/projects/{env:PROJECT_ID}/locations/us-south1/endpoints/openapi",
+        "headers": {
+          "Authorization": "Bearer {env:GCLOUD_ACCESS_TOKEN}"
+        }
+      },
+      "models": {
+        "qwen/qwen3-coder-480b-a35b-instruct-maas": {
+          "name": "Qwen3 Coder 480B",
+          "max_retries": 100
+        }
+      }
     }
   }
 }
