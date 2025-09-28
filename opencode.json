@@ -1,0 +1,399 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "browser": {
+      "description": "Automates web browsing tasks via Chrome DevTools MCP.",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "{file:./prompts/browser.txt}",
+      "tools": {
+        "bash": false,
+        "chrome-devtools_*": true,
+        "edit": false,
+        "read": false,
+        "webfetch": false,
+        "write": false
+      }
+    },
+    "build": {
+      "description": "Primary orchestrator that delegates software engineering work to subagents.",
+      "mode": "primary",
+      "model": "anthropic/claude-opus-4-1-20250805",
+      "prompt": "{file:./prompts/build.txt}",
+      "tools": {
+        "bash": true,
+        "chrome-devtools_*": false,
+        "docs-cloudflare-workerd_*": false,
+        "docs-cloudflare-workers-sdk_*": false,
+        "docs-hydrogen_*": false,
+        "docs-react-router_*": false,
+        "docs-react_*": false,
+        "docs-shopify-cli_*": false,
+        "docs-vite_*": false,
+        "edit": true,
+        "glob": true,
+        "grep": true,
+        "kit-mcp_*": false,
+        "list": true,
+        "patch": false,
+        "read": true,
+        "shopify-dev-mcp_*": false,
+        "task": true,
+        "todoread": true,
+        "todowrite": true,
+        "webfetch": true,
+        "write": true
+      }
+    },
+    "codebase-search": {
+      "description": "Finds files relevant to queries using efficient search tools",
+      "mode": "subagent",
+      "model": "opencode/grok-code",
+      "options": {
+        "temperature": 0.1
+      },
+      "prompt": "{file:./prompts/codebase-search.txt}",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "kit-mcp_*": true,
+        "list": true,
+        "patch": false,
+        "read": true,
+        "webfetch": false,
+        "write": false
+      }
+    },
+    "oracle": {
+      "description": "Expert AI advisor for advanced reasoning, technical guidance, code reviews and architectural advice",
+      "mode": "subagent",
+      "model": "opencode/gpt-5-codex",
+      "prompt": "{file:./prompts/oracle.txt}",
+      "tools": {
+        "glob": true,
+        "grep": true,
+        "kit-mcp_*": true,
+        "list": true,
+        "read": true,
+        "webfetch": true
+      }
+    },
+    "plan": {
+      "description": "Planner agent disabled to avoid redundant task planning.",
+      "disable": true,
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "{file:./prompts/plan.txt}"
+    },
+    "shopify-expert": {
+      "description": "Specialized agent for Shopify development with access to Shopify, React, and web framework documentation",
+      "mode": "subagent",
+      "model": "anthropic/claude-sonnet-4-20250514",
+      "prompt": "{file:./prompts/shopify-expert.txt}",
+      "tools": {
+        "bash": false,
+        "docs-cloudflare-workerd_*": true,
+        "docs-cloudflare-workers-sdk_*": true,
+        "docs-hydrogen_*": true,
+        "docs-react-router_*": true,
+        "docs-react_*": true,
+        "docs-shopify-cli_*": true,
+        "docs-vite_*": true,
+        "edit": false,
+        "glob": true,
+        "grep": true,
+        "list": true,
+        "patch": false,
+        "read": true,
+        "shopify-dev-mcp_*": true,
+        "webfetch": false,
+        "write": false
+      },
+      "disable": true
+    }
+  },
+  "autoupdate": true,
+  "formatter": {
+    "shfmt": {
+      "command": [
+        "shfmt",
+        "-w",
+        "-i",
+        "2",
+        "-bn",
+        "-ci",
+        "-sr",
+        "-kp",
+        "$FILE"
+      ],
+      "extensions": [
+        ".sh",
+        ".bash",
+        ".bashrc",
+        ".bash_profile",
+        ".bash_aliases",
+        ".zshrc",
+        ".zsh",
+        ".ksh"
+      ]
+    }
+  },
+  "keybinds": {
+    "leader": "ctrl+x"
+  },
+  "lsp": {
+    "bash-lsp": {
+      "command": [
+        "bash-language-server",
+        "start"
+      ],
+      "extensions": [
+        ".sh",
+        ".bash",
+        ".bashrc",
+        ".bash_profile",
+        ".bash_aliases",
+        ".zshrc",
+        ".zsh",
+        ".ksh",
+        ".fish",
+        ".csh"
+      ],
+      "initialization": {
+        "bashIde": {
+          "enableSourceErrorDiagnostics": true,
+          "globPattern": "**/*@(.sh|.bash|.inc|.command|.zsh)",
+          "highlightParsingErrors": true,
+          "includeAllWorkspaceSymbols": true,
+          "shellcheckArguments": [
+            "--shell=bash",
+            "--severity=warning",
+            "--external-sources",
+            "--source-path=SCRIPTDIR"
+          ],
+          "shellcheckPath": "shellcheck"
+        }
+      }
+    },
+    "graphql": {
+      "command": [
+        "graphql-lsp",
+        "server",
+        "-m",
+        "stream"
+      ],
+      "extensions": [
+        ".graphql",
+        ".gql",
+        ".ts",
+        ".tsx",
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs"
+      ]
+    }
+  },
+  "mcp": {
+    "chrome-devtools": {
+      "command": [
+        "npx",
+        "chrome-devtools-mcp@latest"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "deep-wiki": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://mcp.deepwiki.com/sse"
+    },
+    "docs-cloudflare-workerd": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/cloudflare/workerd"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-cloudflare-workers-sdk": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/cloudflare/workers-sdk"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-hydrogen": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/Shopify/hydrogen"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-react": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/facebook/react"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-react-router": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/remix-run/react-router"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-shopify-cli": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/Shopify/cli"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "docs-vite": {
+      "command": [
+        "npx",
+        "mcp-remote",
+        "https://gitmcp.io/vitejs/vite"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "kit-mcp": {
+      "command": [
+        "/Users/sam/.local/share/uv/tools/cased-kit/bin/python",
+        "-m",
+        "kit.mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "KIT_ANTHROPIC_TOKEN": "${ANTHROPIC_API_KEY}",
+        "KIT_GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "KIT_MCP_LOG_LEVEL": "INFO",
+        "KIT_OPENAI_TOKEN": "${OPENAI_API_KEY}"
+      },
+      "type": "local"
+    },
+    "playwright": {
+      "command": [
+        "bunx",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "shopify-dev-mcp": {
+      "command": [
+        "npx",
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
+  },
+  "model": "anthropic/claude-opus-4-1-20250805",
+  "provider": {
+    "anthropic": {
+      "models": {
+        "claude-opus-4-1-20250805": {
+          "limit": {
+            "context": 200000,
+            "output": 28800
+          },
+          "options": {
+            "maxInputTokens": 100800,
+            "temperature": 0.7,
+            "thinking": {
+              "budgetTokens": 3200,
+              "type": "enabled"
+            }
+          }
+        },
+        "claude-opus-4-20250514": {
+          "limit": {
+            "context": 200000,
+            "output": 28800
+          },
+          "options": {
+            "maxInputTokens": 100800,
+            "temperature": 0.7,
+            "thinking": {
+              "budgetTokens": 3200,
+              "type": "enabled"
+            }
+          }
+        },
+        "claude-sonnet-4-20250514": {
+          "limit": {
+            "context": 200000,
+            "output": 64000
+          },
+          "options": {
+            "maxInputTokens": 81600,
+            "temperature": 0.7,
+            "thinking": {
+              "budgetTokens": 6400,
+              "type": "enabled"
+            }
+          }
+        }
+      }
+    },
+    "openai": {
+      "models": {
+        "gpt-5": {
+          "options": {
+            "include": [
+              "reasoning.encrypted_content"
+            ],
+            "reasoningEffort": "medium",
+            "reasoningSummary": "auto",
+            "temperature": 0.7,
+            "textVerbosity": "medium"
+          }
+        },
+        "o3": {
+          "options": {
+            "reasoningEffort": "medium",
+            "temperature": 0.7
+          }
+        }
+      }
+    },
+    "opencode": {
+      "models": {
+        "sonic": {
+          "limit": {
+            "context": 256000,
+            "output": 32000
+          },
+          "options": {
+            "maxInputTokens": 134400,
+            "temperature": 0.7,
+            "thinking": {
+              "budgetTokens": 3200,
+              "type": "enabled"
+            }
+          }
+        }
+      }
+    }
+  },
+  "share": "disabled",
+  "theme": "system"
+}
